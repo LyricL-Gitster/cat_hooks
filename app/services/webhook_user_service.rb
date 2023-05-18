@@ -6,7 +6,9 @@ require "net/http"
 class WebhookUserService
   class << self
     def notify_all_async!
-      WebhookUser.find_each { |wu| notify_async! wu }
+      Thread.new do
+        WebhookUser.find_each { |wu| notify_async! wu }
+      end
     end
 
     def notify_async!(webhook_user)

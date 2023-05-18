@@ -24,13 +24,11 @@ class VehiclesController < ApplicationController
   def update
     vehicle = Vehicle.find params[:id]
 
-    if vehicle.present? && vehicle.update(vehicle_params)
+    if vehicle.update(vehicle_params)
       notify_webhook_users_async
       render json: vehicle
-    elsif vehicle.present?
-      render json: { errors: vehicle.errors }, status: 400
     else
-      head 400
+      render json: { errors: vehicle.errors }, status: 400
     end
   end
 
@@ -52,8 +50,6 @@ class VehiclesController < ApplicationController
   end
 
   def notify_webhook_users_async
-    Thread.new do
-      WebhookUserService.notify_all_async!
-    end
+    WebhookUserService.notify_all_async!
   end
 end
